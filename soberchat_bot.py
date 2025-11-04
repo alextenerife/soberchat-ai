@@ -1,22 +1,23 @@
 import os
+import sys
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
 
-print("1. Импорты прошли")
+print("1. Импорты прошли — OK")
 
 # Токен
 TOKEN = os.getenv("TOKEN")
 if not TOKEN:
-    print("ОШИБКА: ТОКЕН НЕ НАЙДЕН!")
-    exit(1)
+    print("ОШИБКА: ТОКЕН НЕ НАЙДЕН! Проверь переменную окружения.")
+    sys.exit(1)
 else:
-    print("2. Токен загружен")
+    print("2. Токен загружен — OK")
 
 KO_FI = "https://ko-fi.com/soberchatai"
 
 # /start
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    print("3. Команда /start вызвана")
+    print("3. Команда /start получена")
     keyboard = [[InlineKeyboardButton("Голосовой чат", url=KO_FI)]]
     reply_markup = InlineKeyboardMarkup(keyboard)
     await update.message.reply_text(
@@ -36,18 +37,24 @@ async def handle_voice(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 # Приложение
 print("5. Создаём приложение...")
-app = Application.builder().token(TOKEN).build()
+try:
+    app = Application.builder().token(TOKEN).build()
+    print("6. Приложение создано — OK")
+except Exception as e:
+    print(f"ОШИБКА ПРИ СОЗДАНИИ ПРИЛОЖЕНИЯ: {e}")
+    sys.exit(1)
 
-print("6. Добавляем хендлеры...")
+print("7. Добавляем хендлеры...")
 app.add_handler(CommandHandler("start", start))
 app.add_handler(MessageHandler(filters.VOICE | filters.AUDIO, handle_voice))
+print("8. Хендлеры добавлены — OK")
 
-# Запуск с отладкой
+# Запуск
 if __name__ == "__main__":
+    print("Bot is running... Поллинг запущен!")
     try:
-        print("Bot is running... Поллинг запущен!")
         app.run_polling(allowed_updates=Update.ALL_TYPES)
     except Exception as e:
-        print(f"ОШИБКА ПРИ ЗАПУСКЕ: {e}")
+        print(f"ОШИБКА ПОЛЛИНГА: {e}")
         import traceback
         traceback.print_exc()

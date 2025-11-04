@@ -2,12 +2,21 @@ import os
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
 
-# Токен из переменной окружения
+print("1. Импорты прошли")
+
+# Токен
 TOKEN = os.getenv("TOKEN")
+if not TOKEN:
+    print("ОШИБКА: ТОКЕН НЕ НАЙДЕН!")
+    exit(1)
+else:
+    print("2. Токен загружен")
+
 KO_FI = "https://ko-fi.com/soberchatai"
 
-# Команда /start
+# /start
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    print("3. Команда /start вызвана")
     keyboard = [[InlineKeyboardButton("Голосовой чат", url=KO_FI)]]
     reply_markup = InlineKeyboardMarkup(keyboard)
     await update.message.reply_text(
@@ -15,8 +24,9 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         reply_markup=reply_markup
     )
 
-# Обработка голосовых сообщений
+# Голос
 async def handle_voice(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    print("4. Голосовое сообщение получено")
     keyboard = [[InlineKeyboardButton("$1 — Спасибо!", url=KO_FI)]]
     reply_markup = InlineKeyboardMarkup(keyboard)
     await update.message.reply_text(
@@ -24,14 +34,15 @@ async def handle_voice(update: Update, context: ContextTypes.DEFAULT_TYPE):
         reply_markup=reply_markup
     )
 
-# Создание приложения
+# Приложение
+print("5. Создаём приложение...")
 app = Application.builder().token(TOKEN).build()
 
-# Регистрация хендлеров
+print("6. Добавляем хендлеры...")
 app.add_handler(CommandHandler("start", start))
 app.add_handler(MessageHandler(filters.VOICE | filters.AUDIO, handle_voice))
 
-# Запуск бота ТОЛЬКО при прямом запуске
+# Запуск
 if __name__ == "__main__":
-    print("Bot is running...")
+    print("Bot is running... Поллинг запущен!")
     app.run_polling(allowed_updates=Update.ALL_TYPES)

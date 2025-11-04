@@ -42,7 +42,12 @@ print("6. Добавляем хендлеры...")
 app.add_handler(CommandHandler("start", start))
 app.add_handler(MessageHandler(filters.VOICE | filters.AUDIO, handle_voice))
 
-# Запуск
+# Запуск с отладкой
 if __name__ == "__main__":
-    print("Bot is running... Поллинг запущен!")
-    app.run_polling(allowed_updates=Update.ALL_TYPES)
+    try:
+        print("Bot is running... Поллинг запущен!")
+        app.run_polling(allowed_updates=Update.ALL_TYPES)
+    except Exception as e:
+        print(f"ОШИБКА ПРИ ЗАПУСКЕ: {e}")
+        import traceback
+        traceback.print_exc()

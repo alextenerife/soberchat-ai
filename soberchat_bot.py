@@ -27,11 +27,11 @@ async def handle_voice(update: Update, context: ContextTypes.DEFAULT_TYPE):
 # Создание приложения
 app = Application.builder().token(TOKEN).build()
 
-# Регистрация хендлеров
+# Регистрация хендлеров — УБРАЛИ filters.DOCUMENT!
 app.add_handler(CommandHandler("start", start))
-app.add_handler(MessageHandler(filters.VOICE | filters.AUDIO | filters.DOCUMENT, handle_voice))
+app.add_handler(MessageHandler(filters.VOICE | filters.AUDIO, handle_voice))
 
-# Запуск только при прямом запуске файла
+# Запуск бота
 if __name__ == "__main__":
     print("Bot is running...")
     app.run_polling(allowed_updates=Update.ALL_TYPES)
